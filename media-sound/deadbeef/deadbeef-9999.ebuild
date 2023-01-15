@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
@@ -8,7 +8,7 @@ PLOCALES="be bg bn ca cs da de el en_GB es et eu fa fi fr gl he hr hu id it ja k
 
 PLOCALE_BACKUP="en_GB"
 
-inherit autotools eutils git-r3 gnome2-utils l10n xdg-utils
+inherit autotools eutils git-r3 gnome2-utils plocale xdg-utils
 
 EGIT_REPO_URI="https://github.com/DeadBeeF-Player/${PN}.git"
 EGIT_BRANCH="master"
@@ -137,7 +137,7 @@ DEPEND="${RDEPEND}
 		amd64? ( dev-lang/yasm:0 ) )"
 
 src_prepare() {
-	if [[ $(l10n_get_locales disabled) =~ "ru" ]] ; then
+	if [[ $(plocale_get_locales disabled) =~ "ru" ]] ; then
 		eapply "${FILESDIR}/${P}-remove-ru-help-translation.patch"
 		rm -v "${S}/translation/help.ru.txt" || die
 	fi
@@ -147,7 +147,7 @@ src_prepare() {
 			-i "${S}/po/LINGUAS" || die
 	}
 
-        l10n_for_each_disabled_locale_do remove_locale
+		plocale_for_each_disabled_locale remove_locale
 
 	if use midi ; then
 		# set default gentoo path
