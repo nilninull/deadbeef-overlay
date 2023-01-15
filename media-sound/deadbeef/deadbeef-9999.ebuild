@@ -8,7 +8,7 @@ PLOCALES="be bg bn ca cs da de el en_GB es et eu fa fi fr gl he hr hu id it ja k
 
 PLOCALE_BACKUP="en_GB"
 
-inherit autotools eutils git-r3 gnome2-utils plocale xdg-utils
+inherit autotools xdg eutils git-r3 plocale
 
 EGIT_REPO_URI="https://github.com/DeadBeeF-Player/${PN}.git"
 EGIT_BRANCH="master"
@@ -40,7 +40,6 @@ LICENSE="BSD
 	gtk3? ( GPL-2 )
 	hotkeys? ( ZLIB )
 	lastfm? ( GPL-2 )
-	libav? ( GPL-2 )
 	libnotify? ( GPL-2 )
 	libsamplerate? ( GPL-2 )
 	m3u? ( ZLIB )
@@ -71,26 +70,24 @@ LICENSE="BSD
 SLOT="0"
 
 IUSE="+alsa +flac gtk2 +hotkeys +m3u +mad +mp3 +sndfile +vorbis
-	aac adplug alac cdda cdparanoia converter cover cover-imlib2 cover-network curl dts dumb equalizer
-	ffmpeg gme +gtk3 lastfm libav libnotify libsamplerate mac midi mms mono2stereo mpg123 musepack nls
-	nullout opus oss playlist-browser psf pulseaudio replaygain-scanner sc68 shell-exec shn sid tta unity vtx wavpack wma zip"
+	aac adplug alac cdda cdparanoia converter cover cover-network curl dts dumb equalizer
+	ffmpeg gme +gtk3 lastfm libnotify libsamplerate mac midi mms mono2stereo mpg123 musepack nls
+	nullout opus oss playlist-browser psf pulseaudio pipewire replaygain-scanner sc68 shell-exec shn sid tta unity vtx wavpack wma zip"
 
 REQUIRED_USE="cdparanoia? ( cdda )
 	converter? ( || ( gtk2 gtk3 ) )
-	cover-imlib2? ( cover )
 	cover-network? ( cover curl )
 	cover? ( || ( gtk2 gtk3 ) )
-	ffmpeg? ( !libav )
 	lastfm? ( curl )
-	libav? ( !ffmpeg )
 	mp3? ( || ( mad mpg123 ) )
 	playlist-browser? ( || ( gtk2 gtk3 ) )
 	shell-exec? ( || ( gtk2 gtk3 ) )
-	|| ( alsa oss pulseaudio nullout )"
+	|| ( alsa oss pulseaudio pipewire nullout )"
 
 PDEPEND="media-plugins/deadbeef-plugins-meta:0"
 
 RDEPEND="dev-libs/glib:2
+	dev-libs/libdispatch:=
 	aac? ( media-libs/faad2:0 )
 	adplug? ( media-libs/adplug:0 )
 	alsa? ( media-libs/alsa-lib:0 )
@@ -98,13 +95,12 @@ RDEPEND="dev-libs/glib:2
 	cdda? ( dev-libs/libcdio:0=
 		media-libs/libcddb:0 )
 	cdparanoia? ( dev-libs/libcdio-paranoia:0 )
-	cover? ( cover-imlib2? ( media-libs/imlib2:0 )
+	cover? ( media-libs/imlib2[jpeg,png]
 		media-libs/libpng:0=
 		virtual/jpeg:0
 		x11-libs/gdk-pixbuf:2[jpeg] )
 	curl? ( net-misc/curl:0 )
 	ffmpeg? ( media-video/ffmpeg:0= )
-	libav? ( media-video/libav:0= )
 	flac? ( media-libs/flac:0 )
 	gme? ( sys-libs/zlib:0 )
 	gtk2? ( dev-libs/atk:0
@@ -123,6 +119,7 @@ RDEPEND="dev-libs/glib:2
 	opus? ( media-libs/opusfile:0 )
 	psf? ( sys-libs/zlib:0 )
 	pulseaudio? ( media-sound/pulseaudio:0 )
+	pipewire? ( media-video/pipewire )
 	sndfile? ( media-libs/libsndfile:0 )
 	vorbis? ( media-libs/libogg:0
 		media-libs/libvorbis:0 )
@@ -137,17 +134,14 @@ DEPEND="${RDEPEND}
 		amd64? ( dev-lang/yasm:0 ) )"
 
 src_prepare() {
-	if [[ $(plocale_get_locales disabled) =~ "ru" ]] ; then
-		eapply "${FILESDIR}/${P}-remove-ru-help-translation.patch"
-		rm -v "${S}/translation/help.ru.txt" || die
-	fi
+	sed 's/Toggle Pause/Toggle-Pause/' -i deadbeef.desktop.in || die
 
 	remove_locale() {
 		sed -e "/${1}/d" \
 			-i "${S}/po/LINGUAS" || die
 	}
 
-		plocale_for_each_disabled_locale remove_locale
+	plocale_for_each_disabled_locale remove_locale
 
 	if use midi ; then
 		# set default gentoo path
@@ -155,29 +149,21 @@ src_prepare() {
 			-i "${S}/plugins/wildmidi/wildmidiplug.c" || die
 	fi
 
-	if ! use unity ; then
-		# remove unity trash
-		eapply "${FILESDIR}/${P}-remove-unity-trash.patch"
-	fi
-
 	eapply_user
 
 	config_rpath_update "${S}/config.rpath"
+
+	eautopoint --force
+
 	eautoreconf
 }
 
 src_configure() {
-	if use ffmpeg && ! use libav ; then
-		ffmpeg_configure="$(use_enable ffmpeg)"
-	elif use libav && ! use ffmpeg ; then
-		ffmpeg_configure="$(use_enable libav ffmpeg)"
-	fi
-
 	econf --disable-coreaudio \
 		--disable-portable \
 		--disable-static \
 		--docdir=/usr/share/${PN} \
-		"${ffmpeg_configure}" \
+		$(use_enable ffmpeg) \
 		$(use_enable aac) \
 		$(use_enable adplug) \
 		$(use_enable alac) \
@@ -186,7 +172,6 @@ src_configure() {
 		$(use_enable cdparanoia cdda-paranoia) \
 		$(use_enable converter) \
 		$(use_enable cover artwork) \
-		$(use_enable cover-imlib2 artwork-imlib2) \
 		$(use_enable cover-network artwork-network) \
 		$(use_enable curl vfs-curl) \
 		$(use_enable dts dca) \
@@ -215,6 +200,7 @@ src_configure() {
 		$(use_enable playlist-browser pltbrowser) \
 		$(use_enable psf) \
 		$(use_enable pulseaudio pulse) \
+		$(use_enable pipewire pipewire) \
 		$(use_enable replaygain-scanner rgscanner) \
 		$(use_enable sc68) \
 		$(use_enable shell-exec shellexecui) \
@@ -229,26 +215,8 @@ src_configure() {
 		$(use_enable zip vfs-zip)
 }
 
-pkg_preinst() {
-	if use gtk2 || use gtk3 ; then
-		gnome2_icon_savelist
-	fi
-}
+src_install() {
+	default
 
-pkg_postinst() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
-
-	if use gtk2 || use gtk3 ; then
-		xdg_icon_cache_update
-	fi
-}
-
-pkg_postrm() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
-
-	if use gtk2 || use gtk3 ; then
-		xdg_icon_cache_update
-	fi
+	find "${ED}" -name '*.la' -delete || die
 }
