@@ -23,7 +23,7 @@ DEPEND+=" media-sound/deadbeef:0"
 RESTRICT+=" mirror"
 
 if [[ "${DEADBEEF_GUI}" == "yes" ]] ; then
-	IUSE+=" +gtk2 gtk3"
+	IUSE+=" gtk2 +gtk3"
 	REQUIRED_USE="|| ( gtk2 gtk3 )"
 	GUI_DEPEND="gtk2? ( media-sound/deadbeef:0[gtk2] )
 		gtk3? ( media-sound/deadbeef:0[gtk3] )"
