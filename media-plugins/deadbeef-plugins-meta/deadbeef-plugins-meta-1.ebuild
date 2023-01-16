@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
@@ -10,8 +10,8 @@ SRC_URI=""
 LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="archive bookmark-manager bs2b decast filebrowser gnome-mmkeys infobar
-	jack librarybrowser mpris musical-spectrum opus quick-search
+IUSE="archive bookmark-manager bs2b decast filebrowser gnome-mmkeys infobar infobar-ng
+	jack librarybrowser mpris musical-spectrum opus pipewire quick-search
 	replaygain-control soxr spectrogram statusnotifier stereo-widener
 	vk vu-meter waveform-seekbar"
 
@@ -22,7 +22,9 @@ PDEPEND="archive? ( media-plugins/deadbeef-archive-reader:0 )
 	filebrowser? ( media-plugins/deadbeef-fb:0 )
 	gnome-mmkeys? ( media-plugins/deadbeef-gnome-mmkeys:0 )
 	infobar? ( media-plugins/deadbeef-infobar:0 )
+	infobar-ng? ( media-plugins/deadbeef-infobar-ng:0 )
 	jack? ( media-plugins/deadbeef-jack:0 )
+	pipewire? ( || ( media-sound/deadbeef[pipewire] media-plugins/deadbeef-pipewire ) )
 	librarybrowser? ( media-plugins/deadbeef-librarybrowser:0 )
 	mpris? ( media-plugins/deadbeef-mpris:0 )
 	musical-spectrum? ( media-plugins/deadbeef-musical-spectrum:0 )
