@@ -90,7 +90,6 @@ PDEPEND="media-plugins/deadbeef-plugins-meta:0"
 RDEPEND="dev-libs/glib:2
 	dev-libs/libdispatch:=
 	aac? ( media-libs/faad2:0 )
-	adplug? ( media-libs/adplug:0 )
 	alsa? ( media-libs/alsa-lib:0 )
 	alac? ( media-libs/faad2:0 )
 	cdda? ( dev-libs/libcdio:0=
