@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019, 2023 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: deadbeef-plugins.eclass
@@ -12,8 +12,6 @@
 if [[ "${EAPI}" -lt 6 ]] ; then
 	die "EAPI=${EAPI} is not supported"
 fi
-
-inherit eutils
 
 : ${SLOT:=0}
 

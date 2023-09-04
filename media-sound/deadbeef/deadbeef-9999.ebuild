@@ -8,7 +8,7 @@ PLOCALES="be bg bn ca cs da de el en_GB es et eu fa fi fr gl he hr hu id it ja k
 
 PLOCALE_BACKUP="en_GB"
 
-inherit autotools xdg eutils git-r3 plocale
+inherit autotools xdg git-r3 plocale
 
 EGIT_REPO_URI="https://github.com/DeadBeeF-Player/${PN}.git"
 EGIT_BRANCH="master"
