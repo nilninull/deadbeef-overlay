@@ -117,7 +117,7 @@ RDEPEND="dev-libs/glib:2
 	mpg123? ( media-sound/mpg123:0 )
 	opus? ( media-libs/opusfile:0 )
 	psf? ( sys-libs/zlib:0 )
-	pulseaudio? ( media-sound/pulseaudio:0 )
+	pulseaudio? ( media-libs/libpulse )
 	pipewire? ( media-video/pipewire )
 	sndfile? ( media-libs/libsndfile:0 )
 	vorbis? ( media-libs/libogg:0

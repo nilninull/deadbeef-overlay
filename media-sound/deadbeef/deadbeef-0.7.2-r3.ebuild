@@ -119,7 +119,7 @@ RDEPEND="dev-libs/glib:2
 	midi? ( media-sound/timidity-freepats:0 )
 	mpg123? ( media-sound/mpg123:0 )
 	psf? ( sys-libs/zlib:0 )
-	pulseaudio? ( media-sound/pulseaudio:0 )
+	pulseaudio? ( media-libs/libpulse )
 	sndfile? ( media-libs/libsndfile:0 )
 	vorbis? ( media-libs/libogg:0
 		media-libs/libvorbis:0 )
